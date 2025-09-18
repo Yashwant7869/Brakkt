@@ -19,6 +19,9 @@ export type ShortsProps<T> = {
   itemRowCount?: number;
   isLoadingNext?: boolean;
   onRefresh?: () => void;
+  onLike?: (id: string) => void;
+  onComment?: (id: string) => void;
+  onShare?: (url: string) => void;
 };
 
 const viewabilityConfig = {
@@ -27,7 +30,7 @@ const viewabilityConfig = {
 
 function Shorts<T>(props: ShortsProps<T>): JSX.Element {
   const flatListRef = useRef<FlatList>(null);
-  const {items, onEndReached, onRefresh} = props;
+  const {items, onEndReached, onRefresh, onLike, onComment, onShare} = props;
   const [visibleIndex, setVisibleIndex] = useState(0);
   const [layout, setLayout] = useState<LayoutRectangle>({
     height: 0,
@@ -70,10 +73,14 @@ function Shorts<T>(props: ShortsProps<T>): JSX.Element {
                 layout={layout}
                 playing={index === visibleIndex}
                 visible={index === visibleIndex}
+                item={item}
+                onLike={onLike}
+                onComment={onComment}
+                onShare={onShare}
               />
             );
           },
-          [layout, visibleIndex],
+          [layout, visibleIndex, onLike, onComment, onShare],
         )}
         onViewableItemsChanged={onViewRef.current}
         pagingEnabled
