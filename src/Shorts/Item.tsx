@@ -93,7 +93,7 @@ const ShortItem: React.FC<ShortItemProps> = ({
         width={layout.width}
         videoId={youtubeId}
         play={playing}
-        onChangeState={event => {
+        onChangeState={(event: string) => {
           if (event === 'ended' && visible) {
             youtubePlayerRef?.current?.seekTo(0, true);
           }
@@ -125,6 +125,7 @@ const ShortItem: React.FC<ShortItemProps> = ({
           icon={faShare}
         />
       </View>
+     
     </View>
   );
 };
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
   actionsContainer: {
     position: 'absolute',
     right: 16,
-    bottom: 100,
+    bottom: 100, // Better positioning above bottom navigation
     alignItems: 'center',
     zIndex: 1,
   },
