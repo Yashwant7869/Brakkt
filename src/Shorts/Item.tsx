@@ -14,20 +14,30 @@ import { faHeart, faComment, faShare } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
 
 export const getYoutubeIdFromURL = (url: string): string | undefined => {
-  if (url.includes('?')) {
-    const arr = url.split('?');
-    arr.pop();
-
-    url = arr[0];
+  // Handle YouTube Shorts URLs first
+  if (url.includes('youtube.com/shorts/')) {
+    return url.replace(/.*youtube\.com\/shorts\/([^/?&]+).*/, '$1');
   }
 
+  // Handle regular YouTube URLs with query parameters
+  if (url.includes('youtube.com/watch') && url.includes('v=')) {
+    const match = url.match(/[?&]v=([^&]+)/);
+    return match ? match[1] : undefined;
+  }
+
+  // Handle youtu.be URLs
+  if (url.includes('youtu.be/')) {
+    return url.replace(/.*youtu\.be\/([^/?&]+).*/, '$1');
+  }
+
+  // Handle embed URLs
+  if (url.includes('youtube.com/embed/')) {
+    return url.replace(/.*youtube\.com\/embed\/([^/?&]+).*/, '$1');
+  }
+
+  // Fallback for other formats
   const arr = url.split(/(vi\/|v%3D|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-
-  const youtubeId = undefined !== arr[2] ? arr[2].split(/[^\w-]/i)[0] : arr[0];
-
-  if (youtubeId.includes('https://youtube.com/shorts/')) {
-    return youtubeId.replace('https://youtube.com/shorts/', '');
-  }
+  const youtubeId = undefined !== arr[2] ? arr[2].split(/[^\w-]/i)[0] : undefined;
 
   return youtubeId;
 };
