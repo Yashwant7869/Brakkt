@@ -69,15 +69,15 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: '#000000',
-    paddingVertical: 8,
-    paddingBottom: 20,
+    paddingVertical: 3,
+    paddingBottom: 3,
     borderTopWidth: 1,
     borderTopColor: '#333333',
   },
   tab: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 5,
   },
   tabLabel: {
     fontSize: 10,

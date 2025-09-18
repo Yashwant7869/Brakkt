@@ -10,7 +10,7 @@ import React, {memo, useCallback, useRef, useState} from 'react';
 import ShortItem from './Item';
 import uuid from 'react-native-uuid';
 
-type Item<T> = T & {url: string};
+type Item<T> = T & {url: any}; // Changed to any to support both string URLs and require() for local files
 
 export type ShortsProps<T> = {
   items: Item<T>[];
@@ -22,6 +22,8 @@ export type ShortsProps<T> = {
   onLike?: (id: string) => void;
   onComment?: (id: string) => void;
   onShare?: (url: string) => void;
+  onFollow?: (userId: string) => void;
+  onList?: (userId: string) => void;
 };
 
 const viewabilityConfig = {
@@ -30,7 +32,7 @@ const viewabilityConfig = {
 
 function Shorts<T>(props: ShortsProps<T>): JSX.Element {
   const flatListRef = useRef<FlatList>(null);
-  const {items, onEndReached, onRefresh, onLike, onComment, onShare} = props;
+  const {items, onEndReached, onRefresh, onLike, onComment, onShare, onFollow} = props;
   const [visibleIndex, setVisibleIndex] = useState(0);
   const [layout, setLayout] = useState<LayoutRectangle>({
     height: 0,
@@ -77,10 +79,11 @@ function Shorts<T>(props: ShortsProps<T>): JSX.Element {
                 onLike={onLike}
                 onComment={onComment}
                 onShare={onShare}
+                onFollow={onFollow}
               />
             );
           },
-          [layout, visibleIndex, onLike, onComment, onShare],
+          [layout, visibleIndex, onLike, onComment, onShare, onFollow],
         )}
         onViewableItemsChanged={onViewRef.current}
         pagingEnabled

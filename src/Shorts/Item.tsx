@@ -1,50 +1,33 @@
-import React, {useRef} from 'react';
-import YoutubePlayer, {
-  YoutubeIframeRef,
-} from '@dooboo/react-native-youtube-iframe';
+import React, {useRef, useState} from 'react';
+import Video, {VideoRef} from 'react-native-video';
 import {
   View,
   TouchableOpacity,
   Text,
-  StyleSheet,
   LayoutRectangle,
+  TouchableWithoutFeedback,
+  Image,
 } from 'react-native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faHeart, faComment, faShare } from '@fortawesome/free-solid-svg-icons';
-import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {
+  faHeart,
+  faComment,
+  faShare,
+  faPlay,
+  faPause,
+  faPlus,
+  faBars,
+  faSearch, // <-- Added search icon
+  faEllipsisV, // <-- Added vertical ellipsis icon
+} from '@fortawesome/free-solid-svg-icons';
+import {faHeart as faHeartRegular} from '@fortawesome/free-regular-svg-icons';
+import {Slider} from '@miblanchard/react-native-slider';
+import {styles} from './styles'; // Import styles from the separate file
 
-export const getYoutubeIdFromURL = (url: string): string | undefined => {
-  // Handle YouTube Shorts URLs first
-  if (url.includes('youtube.com/shorts/')) {
-    return url.replace(/.*youtube\.com\/shorts\/([^/?&]+).*/, '$1');
-  }
-
-  // Handle regular YouTube URLs with query parameters
-  if (url.includes('youtube.com/watch') && url.includes('v=')) {
-    const match = url.match(/[?&]v=([^&]+)/);
-    return match ? match[1] : undefined;
-  }
-
-  // Handle youtu.be URLs
-  if (url.includes('youtu.be/')) {
-    return url.replace(/.*youtu\.be\/([^/?&]+).*/, '$1');
-  }
-
-  // Handle embed URLs
-  if (url.includes('youtube.com/embed/')) {
-    return url.replace(/.*youtube\.com\/embed\/([^/?&]+).*/, '$1');
-  }
-
-  // Fallback for other formats
-  const arr = url.split(/(vi\/|v%3D|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-  const youtubeId = undefined !== arr[2] ? arr[2].split(/[^\w-]/i)[0] : undefined;
-
-  return youtubeId;
-};
-
+// --- Type Definition ---
 type ShortItemProps = {
   index: number;
-  url: string;
+  url: any;
   paused: boolean;
   layout: LayoutRectangle;
   playing: boolean;
@@ -53,8 +36,13 @@ type ShortItemProps = {
   onLike?: (id: string) => void;
   onComment?: (id: string) => void;
   onShare?: (url: string) => void;
+  onFollow?: (userId: string) => void;
+  onList?: (userId: string) => void;
+  onSearch?: () => void; // Optional handler for search
+  onMoreOptions?: () => void; // Optional handler for more options
 };
 
+// --- ActionButton Component (Unchanged) ---
 const ActionButton = ({
   onPress,
   icon,
@@ -67,10 +55,10 @@ const ActionButton = ({
   isActive?: boolean;
 }) => (
   <TouchableOpacity style={styles.actionButton} onPress={onPress}>
-    <FontAwesomeIcon 
-      icon={icon} 
-      size={24} 
-      color={isActive ? '#ff3040' : 'white'} 
+    <FontAwesomeIcon
+      icon={icon}
+      size={24}
+      color={isActive ? '#ff3040' : 'white'}
     />
     {count !== undefined && count > 0 && (
       <Text style={styles.actionCount}>
@@ -80,94 +68,220 @@ const ActionButton = ({
   </TouchableOpacity>
 );
 
-const ShortItem: React.FC<ShortItemProps> = ({
-  index,
-  url,
-  paused,
-  layout,
-  playing,
-  visible,
-  item,
-  onLike,
-  onComment,
-  onShare,
+// --- ProfileSection Component (Unchanged) ---
+const ProfileSection = ({
+  user,
+  description,
+  onFollow,
+}: {
+  user: any;
+  description: string;
+  onFollow: () => void;
 }) => {
-  const youtubeId = getYoutubeIdFromURL(url);
-  const youtubePlayerRef = useRef<YoutubeIframeRef>(null);
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(user?.isFollowing ?? false);
+
+  const handleFollowToggle = () => {
+    setIsFollowing(!isFollowing);
+    onFollow?.();
+  };
+
+  const userInfo = user || {
+    username: 'Anonymous',
+    profileImage: null,
+    id: 'default',
+  };
+
+  const safeDescription = description || '';
+  const truncatedDescription =
+    safeDescription.length > 100
+      ? safeDescription.substring(0, 100) + '...'
+      : safeDescription;
 
   return (
-    <View style={[styles.container, {height: layout.height}]}>
-      <YoutubePlayer
-        ref={youtubePlayerRef}
-        height={layout.height}
-        width={layout.width}
-        videoId={youtubeId}
-        play={playing}
-        onChangeState={(event: string) => {
-          if (event === 'ended' && visible) {
-            youtubePlayerRef?.current?.seekTo(0, true);
-          }
-        }}
-        webViewProps={{
-          injectedJavaScript: `
-            var element = document.getElementsByClassName('container')[0];
-            element.style.position = 'unset';
-            true;
-          `,
-        }}
-      />
+    <View style={styles.profileSection}>
+      <View style={styles.userInfoRow}>
+        <View style={styles.profileImageContainer}>
+          <Image
+            source={
+              userInfo.profileImage
+                ? {uri: userInfo.profileImage}
+                : require('../assest/user.png')
+            }
+            style={styles.profileImage}
+          />
+          {!isFollowing && (
+            <TouchableOpacity
+              style={styles.followIconButton}
+              onPress={handleFollowToggle}>
+              <FontAwesomeIcon icon={faPlus} size={12} color="white" />
+            </TouchableOpacity>
+          )}
+        </View>
 
-      {/* Action buttons overlay */}
-      <View style={styles.actionsContainer}>
-        <ActionButton
-          onPress={() => onLike?.(item.id)}
-          icon={item.isLiked ? faHeart : faHeartRegular}
-          count={item.likes}
-          isActive={item.isLiked}
-        />
-        <ActionButton
-          onPress={() => onComment?.(item.id)}
-          icon={faComment}
-          count={item.comments}
-        />
-        <ActionButton
-          onPress={() => onShare?.(url)}
-          icon={faShare}
-        />
+        <View style={styles.userDetails}>
+          <Text style={styles.username}>{userInfo.username}</Text>
+          <TouchableOpacity
+            style={styles.followButton}
+            onPress={handleFollowToggle}>
+            <Text style={styles.followButtonText}>
+              {isFollowing ? 'Unfollow' : 'Follow'}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-     
+
+      {safeDescription.length > 0 && (
+        <TouchableOpacity
+          style={styles.descriptionContainer}
+          onPress={() => setShowFullDescription(!showFullDescription)}
+          activeOpacity={0.7}>
+          <Text style={styles.description}>
+            {showFullDescription ? safeDescription : truncatedDescription}
+            {safeDescription.length > 100 && (
+              <Text style={styles.moreText}>
+                {showFullDescription ? ' Show less' : ' more'}
+              </Text>
+            )}
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    position: 'relative',
-    backgroundColor: 'black',
-  },
-  actionsContainer: {
-    position: 'absolute',
-    right: 16,
-    bottom: 100, // Better positioning above bottom navigation
-    alignItems: 'center',
-    zIndex: 1,
-  },
-  actionButton: {
-    alignItems: 'center',
-    marginVertical: 12,
-    paddingHorizontal: 8,
-  },
-  actionCount: {
-    color: 'white',
-    fontSize: 11,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginTop: 4,
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    textShadowOffset: {width: 0, height: 1},
-    textShadowRadius: 2,
-  },
-});
+// --- Main ShortItem Component ---
+const ShortItem: React.FC<ShortItemProps> = ({
+  url,
+  paused,
+  layout,
+  playing,
+  item,
+  onLike,
+  onComment,
+  onShare,
+  onFollow,
+  onList,
+  onSearch, // <-- New prop
+  onMoreOptions, // <-- New prop
+}) => {
+  const videoRef = useRef<VideoRef>(null);
+  const [isLocallyPaused, setIsLocallyPaused] = useState(false);
+  const [showPlayIcon, setShowPlayIcon] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [isSeeking, setIsSeeking] = useState(false);
+
+  const handleScreenPress = () => {
+    setIsLocallyPaused(!isLocallyPaused);
+    setShowPlayIcon(!isLocallyPaused);
+
+    if (!isLocallyPaused) {
+      setTimeout(() => setShowPlayIcon(false), 1000);
+    }
+  };
+
+  const handleLoad = (data: any) => setDuration(data.duration);
+
+  const handleProgress = (data: any) => {
+    if (!isSeeking) {
+      setCurrentTime(data.currentTime);
+    }
+  };
+
+  const onSlidingComplete = (value: number[]) => {
+    const newTime = value[0];
+    videoRef.current?.seek(newTime);
+    setCurrentTime(newTime);
+    setIsSeeking(false);
+  };
+
+  const isVideoPaused = paused || !playing || isLocallyPaused;
+
+  return (
+    <View style={[styles.container, {height: layout.height}]}>
+      {/* ======================================= */}
+      {/* ====== NEW HEADER SECTION ADDED ======= */}
+      {/* ======================================= */}
+      <View style={styles.headerContainer}>
+        <TouchableOpacity style={styles.headerButton} onPress={onSearch}>
+          <FontAwesomeIcon icon={faSearch} size={22} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.headerButton} onPress={onMoreOptions}>
+          <FontAwesomeIcon icon={faEllipsisV} size={22} color="white" />
+        </TouchableOpacity>
+      </View>
+      {/* ======================================= */}
+      {/* ============ END OF SECTION =========== */}
+      {/* ======================================= */}
+
+      <TouchableWithoutFeedback onPress={handleScreenPress}>
+        <View style={styles.videoContainer}>
+          <Video
+            ref={videoRef}
+            source={url}
+            style={[styles.video, {height: layout.height, width: layout.width}]}
+            paused={isVideoPaused}
+            repeat
+            resizeMode="cover"
+            muted={false}
+            volume={1.0}
+            playInBackground={false}
+            playWhenInactive={false}
+            onLoad={handleLoad}
+            onProgress={handleProgress}
+          />
+
+          {showPlayIcon && (
+            <View style={styles.playIconContainer}>
+              <FontAwesomeIcon
+                icon={isLocallyPaused ? faPlay : faPause}
+                size={60}
+                color="rgba(255, 255, 255, 0.8)"
+              />
+            </View>
+          )}
+
+          <View style={styles.sliderContainer}>
+            <Slider
+              value={currentTime}
+              minimumValue={0}
+              maximumValue={duration > 0 ? duration : 1}
+              minimumTrackTintColor="#ff3040"
+              maximumTrackTintColor="rgba(255, 255, 255, 0.3)"
+              thumbStyle={styles.thumb}
+              trackStyle={styles.track}
+              onSlidingStart={() => setIsSeeking(true)}
+              onSlidingComplete={onSlidingComplete}
+              onValueChange={value => setCurrentTime(value[0])}
+            />
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+
+      <ProfileSection
+        user={item?.user}
+        description={item?.description || ''}
+        onFollow={() => onFollow?.(item?.user?.id || 'default')}
+      />
+
+      <View style={styles.actionsContainer}>
+        <ActionButton
+          onPress={() => onLike?.(item?.id || 'default')}
+          icon={item?.isLiked ? faHeart : faHeartRegular}
+          count={item?.likes || 0}
+          isActive={item?.isLiked || false}
+        />
+        <ActionButton
+          onPress={() => onComment?.(item?.id || 'default')}
+          icon={faComment}
+          count={item?.comments || 0}
+        />
+        <ActionButton onPress={() => onShare?.(url)} icon={faShare} />
+        <ActionButton onPress={() => onList?.(url)} icon={faBars} />
+      </View>
+    </View>
+  );
+};
 
 export default ShortItem;

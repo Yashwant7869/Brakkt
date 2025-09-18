@@ -62,7 +62,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    marginBottom: 80, // Account for bottom navigation height
+    marginBottom: 1, // Account for bottom navigation height
+     
   },
 });
 
