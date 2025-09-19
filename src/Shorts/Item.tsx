@@ -17,13 +17,14 @@ import {
   faPause,
   faPlus,
   faBars,
-  faSearch, // <-- Added search icon
+  faSearch,
   faEllipsisV,
-  faCamera, // <-- Added vertical ellipsis icon
+  faCamera,
 } from '@fortawesome/free-solid-svg-icons';
 import {faHeart as faHeartRegular} from '@fortawesome/free-regular-svg-icons';
 import {Slider} from '@miblanchard/react-native-slider';
 import {styles} from './styles'; // Import styles from the separate file
+import OptionsBottomSheet from '../components/verticalEclipsOptions/OptionsBottomSheet'; // Import the new component
 
 // --- Type Definition ---
 type ShortItemProps = {
@@ -39,8 +40,8 @@ type ShortItemProps = {
   onShare?: (url: string) => void;
   onFollow?: (userId: string) => void;
   onList?: (userId: string) => void;
-  onSearch?: () => void; // Optional handler for search
-  onMoreOptions?: () => void; // Optional handler for more options
+  onSearch?: () => void;
+  onMoreOptions?: () => void;
 };
 
 // --- ActionButton Component (Unchanged) ---
@@ -163,8 +164,8 @@ const ShortItem: React.FC<ShortItemProps> = ({
   onShare,
   onFollow,
   onList,
-  onSearch, // <-- New prop
-  onMoreOptions, // <-- New prop
+  onSearch,
+  onMoreOptions,
 }) => {
   const videoRef = useRef<VideoRef>(null);
   const [isLocallyPaused, setIsLocallyPaused] = useState(false);
@@ -172,6 +173,7 @@ const ShortItem: React.FC<ShortItemProps> = ({
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [isSeeking, setIsSeeking] = useState(false);
+  const [showOptionsBottomSheet, setShowOptionsBottomSheet] = useState(false); // New state
 
   const handleScreenPress = () => {
     setIsLocallyPaused(!isLocallyPaused);
@@ -197,30 +199,89 @@ const ShortItem: React.FC<ShortItemProps> = ({
     setIsSeeking(false);
   };
 
+  // Handle options button press
+  const handleMoreOptionsPress = () => {
+    setShowOptionsBottomSheet(true);
+    onMoreOptions?.();
+  };
+
+  // Mock handlers for bottom sheet options
+  const handleDescription = () => {
+    console.log('Description pressed');
+    // TODO: Implement description functionality
+  };
+
+  const handleSaveToPlaylist = () => {
+    console.log('Save to playlist pressed');
+    // TODO: Implement save to playlist functionality
+  };
+
+  const handleCaptions = () => {
+    console.log('Captions pressed');
+    // TODO: Implement captions functionality
+  };
+
+  const handleQuality = () => {
+    console.log('Quality pressed');
+    // TODO: Implement quality functionality
+  };
+
+  const handleNotInterested = () => {
+    console.log('Not interested pressed');
+    // TODO: Implement not interested functionality
+  };
+
+  const handleDontRecommend = () => {
+    console.log('Don\'t recommend pressed');
+    // TODO: Implement don't recommend functionality
+  };
+
+  const handleReport = () => {
+    console.log('Report pressed');
+    // TODO: Implement report functionality
+  };
+
+  const handleSendFeedback = () => {
+    console.log('Send feedback pressed');
+    // TODO: Implement send feedback functionality
+  };
+
+  const handleTermsOfService = () => {
+    console.log('Terms of Service pressed');
+    // TODO: Implement terms of service functionality
+  };
+
+  const handlePrivacyPolicy = () => {
+    console.log('Privacy Policy pressed');
+    // TODO: Implement privacy policy functionality
+  };
+
   const isVideoPaused = paused || !playing || isLocallyPaused;
 
   return (
     <View style={[styles.container, {height: layout.height}]}>
-
-      {/* ====== NEW HEADER SECTION ADDED ======= */}
-      
+      {/* Header Section */}
       <View style={styles.headerContainer}>
-  {isVideoPaused ? (
-    <>
-      <FontAwesomeIcon icon={faCamera} size={22} color="white" />
-      <View style={styles.logoSpacer} />
-    </>
-  ) : (
-    <View style={styles.logoSpacer} />
-  )}
-  <TouchableOpacity style={styles.headerButton} onPress={onSearch}>
-    <FontAwesomeIcon icon={faSearch} size={22} color="white" />
-  </TouchableOpacity>
-  <TouchableOpacity style={styles.headerButton} onPress={onMoreOptions}>
-    <FontAwesomeIcon icon={faEllipsisV} size={22} color="white" />
-  </TouchableOpacity>
-</View>
-      {/* ============ END OF SECTION =========== */}
+        {isVideoPaused ? (
+          <>
+            <FontAwesomeIcon icon={faCamera} size={22} color="white" />
+            <View style={styles.logoSpacer} />
+          </>
+        ) : (
+          <View style={styles.logoSpacer} />
+        )}
+        <TouchableOpacity style={styles.headerButton} onPress={onSearch}>
+          <FontAwesomeIcon icon={faSearch} size={22} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.headerButton} 
+          onPress={handleMoreOptionsPress} // Updated to use local handler
+        >
+          <FontAwesomeIcon icon={faEllipsisV} size={22} color="white" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Video Container */}
       <TouchableWithoutFeedback onPress={handleScreenPress}>
         <View style={styles.videoContainer}>
           <Video
@@ -265,12 +326,14 @@ const ShortItem: React.FC<ShortItemProps> = ({
         </View>
       </TouchableWithoutFeedback>
 
+      {/* Profile Section */}
       <ProfileSection
         user={item?.user}
         description={item?.description || ''}
         onFollow={() => onFollow?.(item?.user?.id || 'default')}
       />
 
+      {/* Actions Container */}
       <View style={styles.actionsContainer}>
         <ActionButton
           onPress={() => onLike?.(item?.id || 'default')}
@@ -286,6 +349,22 @@ const ShortItem: React.FC<ShortItemProps> = ({
         <ActionButton onPress={() => onShare?.(url)} icon={faShare} />
         <ActionButton onPress={() => onList?.(url)} icon={faBars} />
       </View>
+
+      {/* Options Bottom Sheet */}
+      <OptionsBottomSheet
+        visible={showOptionsBottomSheet}
+        onClose={() => setShowOptionsBottomSheet(false)}
+        onDescription={handleDescription}
+        onSaveToPlaylist={handleSaveToPlaylist}
+        onCaptions={handleCaptions}
+        onQuality={handleQuality}
+        onNotInterested={handleNotInterested}
+        onDontRecommend={handleDontRecommend}
+        onReport={handleReport}
+        onSendFeedback={handleSendFeedback}
+        onTermsOfService={handleTermsOfService}
+        onPrivacyPolicy={handlePrivacyPolicy}
+      />
     </View>
   );
 };
