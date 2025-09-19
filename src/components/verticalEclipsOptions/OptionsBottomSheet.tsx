@@ -24,6 +24,7 @@ import {
 import {styles} from './styles';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
+const BOTTOM_SHEET_HEIGHT = SCREEN_HEIGHT * 0.6; // Consistent height
 
 interface OptionItem {
   id: string;
@@ -175,24 +176,18 @@ const OptionsBottomSheet: React.FC<OptionsBottomSheetProps> = ({
   };
 
   useEffect(() => {
-    if (visible) {
-      Animated.parallel([
-        Animated.timing(slideAnim, {
-          toValue: SCREEN_HEIGHT * 0.4, // Show from bottom to mid screen
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(backdropOpacity, {
-          toValue: 0.5,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    } else {
-      slideAnim.setValue(SCREEN_HEIGHT);
-      backdropOpacity.setValue(0);
-    }
-  }, [visible]);
+  if (visible) {
+    Animated.parallel([
+      Animated.timing(slideAnim, {
+        // This now correctly calculates to SCREEN_HEIGHT * 0.1
+        toValue: SCREEN_HEIGHT - BOTTOM_SHEET_HEIGHT, 
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      // ...
+    ]).start();
+  }
+}, [visible]);
 
   const renderOptionItem = (option: OptionItem) => (
     <TouchableOpacity
@@ -228,7 +223,6 @@ const OptionsBottomSheet: React.FC<OptionsBottomSheetProps> = ({
             ]}
           />
         </TouchableWithoutFeedback>
-
         {/* Bottom Sheet */}
         <Animated.View
           style={[
@@ -241,11 +235,10 @@ const OptionsBottomSheet: React.FC<OptionsBottomSheetProps> = ({
           <View style={styles.handleContainer}>
             <View style={styles.handle} />
           </View>
-
           {/* Options list */}
           <ScrollView
             style={styles.optionsContainer}
-            showsVerticalScrollIndicator={false}>
+            showsVerticalScrollIndicator={true}>
             {options.map(renderOptionItem)}
           </ScrollView>
         </Animated.View>
@@ -253,5 +246,5 @@ const OptionsBottomSheet: React.FC<OptionsBottomSheetProps> = ({
     </Modal>
   );
 };
- 
+
 export default OptionsBottomSheet;

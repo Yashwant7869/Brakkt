@@ -14,10 +14,9 @@ headerContainer: {
   justifyContent: 'space-between', // Changed to space-between
   alignItems: 'center',
   paddingHorizontal: 15,
-  paddingTop: 50, // Adjust as needed for status bar
+  paddingTop: 16, // Adjust as needed for status bar
   zIndex: 10,
-  // Added a gradient background for better visibility of header elements
-  backgroundColor: 'linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%)',
+  
 },
 headerButton: {
   position: 'relative',
@@ -61,7 +60,7 @@ logoSpacer: { // New spacer style
   actionsContainer: {
     position: 'absolute',
     right: 16,
-    bottom: 100,
+    bottom: 60,
     alignItems: 'center',
     zIndex: 2,
   },

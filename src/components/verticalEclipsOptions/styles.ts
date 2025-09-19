@@ -1,24 +1,23 @@
 import {StyleSheet, Dimensions} from 'react-native';
 
-const SCREEN_HEIGHT = Dimensions.get('window').height;
+const {height: SCREEN_HEIGHT} = Dimensions.get('window');
+const BOTTOM_SHEET_HEIGHT = SCREEN_HEIGHT * 0.6; 
 
 export const styles = StyleSheet.create({
-container: {
+  container: {
     flex: 1,
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: '#000000',
   },
-  bottomSheet: {
-    position: 'absolute' as const,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: SCREEN_HEIGHT * 0.6,
+   bottomSheet: {
+    // ...
+    height: BOTTOM_SHEET_HEIGHT, // This now uses the 90% height
     backgroundColor: '#1C1C1C',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
+    flexDirection: 'column',
   },
   handleContainer: {
     alignItems: 'center' as const,
@@ -31,7 +30,7 @@ container: {
     borderRadius: 2,
   },
   optionsContainer: {
-    flex: 1,
+    flex: 1, // <-- FIX: Added
     paddingHorizontal: 0,
   },
   optionItem: {
@@ -51,5 +50,4 @@ container: {
     fontSize: 16,
     fontWeight: '400',
   },
-
-})
+});
