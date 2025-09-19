@@ -4,6 +4,34 @@ export const styles = StyleSheet.create({
   container: {flex: 1, position: 'relative', backgroundColor: 'black'},
   videoContainer: {flex: 1, justifyContent: 'center'},
   video: {position: 'absolute', top: 0, left: 0, bottom: 0, right: 0},
+  
+headerContainer: {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  flexDirection: 'row',
+  justifyContent: 'space-between', // Changed to space-between
+  alignItems: 'center',
+  paddingHorizontal: 15,
+  paddingTop: 50, // Adjust as needed for status bar
+  zIndex: 10,
+  // Added a gradient background for better visibility of header elements
+  backgroundColor: 'linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%)',
+},
+headerButton: {
+  position: 'relative',
+  marginLeft: 20,
+  padding: 8,
+},
+headerLogo: { // New style for the logo
+  width: 40, // Adjust size as needed
+  height: 40, // Adjust size as needed
+  resizeMode: 'contain',
+},
+logoSpacer: { // New spacer style
+  flex: 1, // Pushes the search and ellipsis icons to the right
+},
   playIconContainer: {
     position: 'absolute',
     top: 0,
@@ -104,17 +132,7 @@ export const styles = StyleSheet.create({
     borderRadius: 4,
   },
 
-  headerContainer: {
-    position: 'absolute',
-    top: 50, // Adjust this value based on status bar height or use SafeAreaView
-    right: 15,
-    flexDirection: 'row',
-    zIndex: 10, // Ensures the header is on top of other elements
-  },
-  headerButton: {
-    marginLeft: 20, // Provides space between the search and ellipsis icons
-    padding: 5, // Makes the touchable area larger
-  },
+  
   followButtonText: {
     color: 'white',
     fontSize: 12,

@@ -18,7 +18,8 @@ import {
   faPlus,
   faBars,
   faSearch, // <-- Added search icon
-  faEllipsisV, // <-- Added vertical ellipsis icon
+  faEllipsisV,
+  faCamera, // <-- Added vertical ellipsis icon
 } from '@fortawesome/free-solid-svg-icons';
 import {faHeart as faHeartRegular} from '@fortawesome/free-regular-svg-icons';
 import {Slider} from '@miblanchard/react-native-slider';
@@ -200,21 +201,26 @@ const ShortItem: React.FC<ShortItemProps> = ({
 
   return (
     <View style={[styles.container, {height: layout.height}]}>
-      {/* ======================================= */}
-      {/* ====== NEW HEADER SECTION ADDED ======= */}
-      {/* ======================================= */}
-      <View style={styles.headerContainer}>
-        <TouchableOpacity style={styles.headerButton} onPress={onSearch}>
-          <FontAwesomeIcon icon={faSearch} size={22} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.headerButton} onPress={onMoreOptions}>
-          <FontAwesomeIcon icon={faEllipsisV} size={22} color="white" />
-        </TouchableOpacity>
-      </View>
-      {/* ======================================= */}
-      {/* ============ END OF SECTION =========== */}
-      {/* ======================================= */}
 
+      {/* ====== NEW HEADER SECTION ADDED ======= */}
+      
+      <View style={styles.headerContainer}>
+  {isVideoPaused ? (
+    <>
+      <FontAwesomeIcon icon={faCamera} size={22} color="white" />
+      <View style={styles.logoSpacer} />
+    </>
+  ) : (
+    <View style={styles.logoSpacer} />
+  )}
+  <TouchableOpacity style={styles.headerButton} onPress={onSearch}>
+    <FontAwesomeIcon icon={faSearch} size={22} color="white" />
+  </TouchableOpacity>
+  <TouchableOpacity style={styles.headerButton} onPress={onMoreOptions}>
+    <FontAwesomeIcon icon={faEllipsisV} size={22} color="white" />
+  </TouchableOpacity>
+</View>
+      {/* ============ END OF SECTION =========== */}
       <TouchableWithoutFeedback onPress={handleScreenPress}>
         <View style={styles.videoContainer}>
           <Video
