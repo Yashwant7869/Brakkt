@@ -264,7 +264,10 @@ const ShortItem: React.FC<ShortItemProps> = ({
       <View style={styles.headerContainer}>
         {isVideoPaused ? (
           <>
-            <FontAwesomeIcon icon={faCamera} size={22} color="white" />
+             <Image 
+                      source={{ uri: 'https://avatar.iran.liara.run/public/21' }} 
+                      style={styles.logo} 
+                    />
             <View style={styles.logoSpacer} />
           </>
         ) : (

@@ -1,4 +1,4 @@
-export {default as HomeScreen} from './HomeScreen';
+export {default as HomeScreen} from './HomeScreen/HomeScreen';
 export {default as ShortsScreen} from './ShortsScreen';
 export {default as AddScreen} from './AddScreen';
 export {default as SearchScreen} from './SearchScreen';

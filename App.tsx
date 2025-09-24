@@ -40,7 +40,7 @@ const App = () => {
       case 'profile':
         return <ProfileScreen />;
       default:
-        return <ShortsScreen />;
+        return <HomeScreen />;
     }
   };
 

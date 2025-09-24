@@ -31,6 +31,11 @@ headerLogo: { // New style for the logo
 logoSpacer: { // New spacer style
   flex: 1, // Pushes the search and ellipsis icons to the right
 },
+logo: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+  },
   playIconContainer: {
     position: 'absolute',
     top: 0,
