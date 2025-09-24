@@ -1,3 +1,6 @@
+
+For run the application 
+
  cd android
 ./gradlew clean
 cd ..
