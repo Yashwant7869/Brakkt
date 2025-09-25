@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import React, {memo, useCallback, useRef, useState} from 'react';
 
-import ShortItem from './Item';
+import ShortItem from './ShortItem';
 import uuid from 'react-native-uuid';
 
 type Item<T> = T & {url: any}; // Changed to any to support both string URLs and require() for local files

@@ -23,7 +23,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {faHeart as faHeartRegular} from '@fortawesome/free-regular-svg-icons';
 import {Slider} from '@miblanchard/react-native-slider';
-import {styles} from './styles'; // Import styles from the separate file
+import {styles} from './ShortItem.styles'; // Import styles from the separate file
 import OptionsBottomSheet from '../components/verticalEclipsOptions/OptionsBottomSheet'; // Import the new component
 
 // --- Type Definition ---

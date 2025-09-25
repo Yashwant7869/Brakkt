@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, FlatList, TouchableOpacity, Image } from 'react-native';
+import { View, Text, ScrollView, FlatList, TouchableOpacity, Image, Alert } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faHeart, faComment, faRetweet, faShare, faEllipsisH, faUserPlus, faPen, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { styles } from './profileScreen.styles';
@@ -52,20 +52,31 @@ const ProfileHeader = ({ user, onEditProfile, onFollow }) => (
     <Text style={styles.username}>{user.username}</Text>
     <Text style={styles.bio}>{user.bio}</Text>
 
-    <View style={styles.statsRow}>
-      <View style={styles.statItem}>
-        <Text style={styles.statValue}>{user.stats.posts}</Text>
-        <Text style={styles.statLabel}>Posts</Text>
-      </View>
-      <View style={styles.statItem}>
-        <Text style={styles.statValue}>{user.stats.followers}</Text>
-        <Text style={styles.statLabel}>Followers</Text>
-      </View>
-      <View style={styles.statItem}>
-        <Text style={styles.statValue}>{user.stats.following}</Text>
-        <Text style={styles.statLabel}>Following</Text>
-      </View>
-    </View>
+   <View style={styles.statsRow}>
+  <TouchableOpacity
+    style={styles.statItem}
+    onPress={() => Alert.alert('Posts', `You have ${user.stats.posts} posts`)}
+  >
+    <Text style={styles.statValue}>{user.stats.posts}</Text>
+    <Text style={styles.statLabel}>Posts</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    style={styles.statItem}
+    onPress={() => Alert.alert('Followers', `You have ${user.stats.followers} followers`)}
+  >
+    <Text style={styles.statValue}>{user.stats.followers}</Text>
+    <Text style={styles.statLabel}>Followers</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    style={styles.statItem}
+    onPress={() => Alert.alert('Following', `You are following ${user.stats.following} users`)}
+  >
+    <Text style={styles.statValue}>{user.stats.following}</Text>
+    <Text style={styles.statLabel}>Following</Text>
+  </TouchableOpacity>
+</View>
   </View>
 );
 
