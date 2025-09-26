@@ -2,16 +2,16 @@ package com.shortsexample;
 
 import android.app.Application;
 import android.content.Context;
-import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
-import com.shortsexample.newarchitecture.MainApplicationReactNativeHost;
+import com.facebook.react.shell.MainReactPackage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Arrays;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -24,9 +24,9 @@ public class MainApplication extends Application implements ReactApplication {
 
         @Override
         protected List<ReactPackage> getPackages() {
-          @SuppressWarnings("UnnecessaryLocalVariable")
-          List<ReactPackage> packages = new PackageList(this).getPackages();
-          return packages;
+          return Arrays.<ReactPackage>asList(
+              new MainReactPackage()
+          );
         }
 
         @Override
@@ -35,16 +35,9 @@ public class MainApplication extends Application implements ReactApplication {
         }
       };
 
-  private final ReactNativeHost mNewArchitectureNativeHost =
-      new MainApplicationReactNativeHost(this);
-
   @Override
   public ReactNativeHost getReactNativeHost() {
-    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-      return mNewArchitectureNativeHost;
-    } else {
-      return mReactNativeHost;
-    }
+    return mReactNativeHost;
   }
 
   @Override
@@ -53,6 +46,15 @@ public class MainApplication extends Application implements ReactApplication {
     // If you opted-in for the New Architecture, we enable the TurboModule system
     ReactFeatureFlags.useTurboModules = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
     SoLoader.init(this, /* native exopackage */ false);
+    
+    // Try to load React Native entry point if it exists and is functional
+    try {
+      Class<?> entryPointClass = Class.forName("com.facebook.react.ReactNativeApplicationEntryPoint");
+      // If the class exists, skip it - we've already initialized SoLoader
+    } catch (ClassNotFoundException e) {
+      // Entry point not found, that's fine
+    }
+    
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 

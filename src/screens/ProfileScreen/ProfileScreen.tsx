@@ -30,7 +30,7 @@ const mockUser = {
 // ];
 
 
-const ProfileHeader = ({ user, onEditProfile, onFollow }) => (
+const ProfileHeader = ({ user, onEditProfile, onFollow }: any) => (
   <View style={styles.headerContainer}>
     <View style={styles.avatarContainer}>
       <Image source={{ uri: user.avatar }} style={styles.avatar} />
@@ -81,9 +81,9 @@ const ProfileHeader = ({ user, onEditProfile, onFollow }) => (
 );
 
 // for now we are using hardcoded tweets data from , import { mockTweets } from '../HomeScreen/mockTweets';
-const TweetsCard = ({ tweets }) => (
+const TweetsCard = ({ tweets }: any) => (
   <>
-    {tweets.map(tweet => <TweetCard key={tweet.id} tweet={tweet} />)}
+    {tweets.map((tweet: any) => <TweetCard key={tweet.id} tweet={tweet} />)}
   </>
 );
 

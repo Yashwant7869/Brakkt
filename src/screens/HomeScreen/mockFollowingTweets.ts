@@ -1,4 +1,4 @@
-export const mockFollowingTweets: Tweet[] = [
+export const mockFollowingTweets: any[] = [
   {
     id: 'f1',
     user: {

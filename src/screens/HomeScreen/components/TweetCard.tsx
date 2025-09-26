@@ -90,14 +90,14 @@ const TweetCard: React.FC<Props> = ({ tweet }) => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.actionButton} onPress={handleRetweet}>
-          <FontAwesomeIcon icon={faRetweet} size={16} style={[styles.actionIcon, isRetweeted && styles.retweetedIcon]} />
+          <FontAwesomeIcon icon={faRetweet} size={16} style={[styles.actionIcon, isRetweeted && styles.retweetedIcon] as any} />
           <Text style={[styles.actionCount, isRetweeted && styles.retweetedIcon]}>
             {formatNumber(retweetsCount)}
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.actionButton} onPress={handleLike}>
-          <FontAwesomeIcon icon={isLiked ? faHeartSolid : faHeart} size={16} style={[styles.actionIcon, isLiked && styles.likedIcon]} />
+          <FontAwesomeIcon icon={isLiked ? faHeartSolid : faHeart} size={16} style={[styles.actionIcon, isLiked && styles.likedIcon] as any} />
           <Text style={[styles.actionCount, isLiked && styles.likedIcon]}>
             {formatNumber(likesCount)}
           </Text>

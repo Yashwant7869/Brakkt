@@ -289,10 +289,10 @@ const ShortItem: React.FC<ShortItemProps> = ({
         <View style={styles.videoContainer}>
           <Video
             ref={videoRef}
-            source={url}
+            source={typeof url === 'string' ? {uri: url} : url}
             style={[styles.video, {height: layout.height, width: layout.width}]}
             paused={isVideoPaused}
-            repeat
+            repeat={true}
             resizeMode="cover"
             muted={false}
             volume={1.0}
