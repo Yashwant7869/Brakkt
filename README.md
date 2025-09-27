@@ -1,3 +1,5 @@
+there is some problem in Addscreen and dependency related things. Now i am moving to implement some pages implementation along with left side drawer 
+
 the new branch will be creating for video and image editing module
 
 For run the application 
